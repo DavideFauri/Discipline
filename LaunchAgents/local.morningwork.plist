@@ -9,7 +9,6 @@
 	<key>ProgramArguments</key>
 	<array>
 		<string>osascript</string>
-		<string>osascript</string>
 		<string>-e</string>
 		<string>tell script "Discipline" to block_me("09:00","13:00", 300)</string>
 	</array>

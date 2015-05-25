@@ -2,24 +2,22 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>Disabled</key>
-	<false/>
 	<key>Label</key>
-	<string>local.morningwork</string>
+	<string>local.eveningwork</string>
 	<key>ProgramArguments</key>
 	<array>
 		<string>osascript</string>
 		<string>-e</string>
-		<string>tell script "Discipline" to block_me("09:00","13:30", 60)</string>
+		<string>tell script "Discipline" to block_me("21:00","23:59", 60)</string>
 	</array>
 	<key>StandardErrorPath</key>
-	<string>/tmp/local.morningwork.err</string>
+	<string>/tmp/local.eveningwork.stderr</string>
 	<key>StandardOutPath</key>
-	<string>/tmp/local.morningwork.out</string>
+	<string>/tmp/local.eveningwork.stdout</string>
 	<key>StartCalendarInterval</key>
 	<dict>
 		<key>Hour</key>
-		<integer>9</integer>
+		<integer>21</integer>
 		<key>Minute</key>
 		<integer>0</integer>
 	</dict>

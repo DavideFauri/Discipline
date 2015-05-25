@@ -10,7 +10,7 @@
 	<array>
 		<string>osascript</string>
 		<string>-e</string>
-		<string>tell script "Discipline" to block_me("14:00","18:00", 300)</string>
+		<string>tell script "Discipline" to block_me("14:00","19:00", 60)</string>
 	</array>
 	<key>StandardErrorPath</key>
 	<string>/tmp/local.afternoonwork.stderr</string>

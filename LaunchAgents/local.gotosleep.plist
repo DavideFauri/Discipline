@@ -10,7 +10,7 @@
 	<array>
 		<string>osascript</string>
 		<string>-e</string>
-		<string>tell script "Discipline" to block_me("01:00","07:00", 300)</string>
+		<string>tell script "Discipline" to block_me("01:00","07:00", 60)</string>
 	</array>
 	<key>StandardErrorPath</key>
 	<string>/tmp/local.gotosleep.stderr</string>

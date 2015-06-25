@@ -12,7 +12,7 @@
 		<string>-e</string>
 		<string>delay 60</string>
 		<string>-e</string>
-		<string>tell script "Discipline" to start_selfcontrol(300)</string>
+		<string>tell script "Discipline" to start_selfcontrol(1439)</string>
 	</array>
 	<key>StandardErrorPath</key>
 	<string>/tmp/local.discipline.stderr</string>

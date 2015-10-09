@@ -1,0 +1,5 @@
+I had to block LaunchControl because it was too easy to disable the daily renewal of the block.
+
+Basically, what I did is explained in the .pdf document: in two word, I removed the permission to execute LaunchControl.
+
+To restore it, one should do a chmod+x on the LaunchControl command inside Contents/MacOS

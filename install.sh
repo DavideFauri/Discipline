@@ -4,4 +4,4 @@
 mkdir -p ~/Library/Script\ Libraries
 mkdir -p ~/Library/LaunchAgents
 
-mv Discipline.scpt ~/Library/Script\ Libraries
+cp Discipline.scpt ~/Library/Script\ Libraries

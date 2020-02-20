@@ -1,4 +1,3 @@
-
 #!/bin/bash
 
 # create folders if missing

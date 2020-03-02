@@ -2,6 +2,8 @@
 
 import argparse
 import sys
+import subprocess
+
 
 def parse_args():
     arg_parser = argparse.ArgumentParser()
@@ -19,7 +21,7 @@ def parse_args():
         "--network",
         dest="SSID",
         action="append",
-        help="List of applicable WiFi SSIDs",
+        help="List of disciplined WiFi SSIDs",
     )
 
     if len(sys.argv) == 1:
@@ -29,8 +31,29 @@ def parse_args():
     return arg_parser.parse_args()
 
 
+def notify(message, title):
+    subprocess.run(
+        ["osascript", "-e", f'display notification "{message}" with title "{title}"']
+    )
+
+def is_block_active():
+    start_time = subprocess.run(
+        ["defaults", "read", "org.eyebeam.SelfControl", "BlockStartedDate"],
+        capture_output=True,
+        text=True,
+    )
+    return start_time.stdout != "4001-01-01 00:00:00 +0000\n"
+
+
+    )
+
 if __name__ == "__main__":
     args = parse_args()
 
+    if is_block_active():
+        notify(message="Block already running!", title="Discipline active")
+        exit(0)
+
+# # write down starting time
 
 # # write down end time

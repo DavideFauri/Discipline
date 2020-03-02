@@ -37,17 +37,24 @@ def parse_args():
 
 
 def notify(message="", title="Discipline"):
-    subprocess.run(
-        ["osascript", "-e", f'display notification "{message}" with title "{title}"']
-    )
+    raise NotImplementedError("notification do not work at the moment")
+    # subprocess.run(
+    #     [
+    #         "sudo",
+    #         "-u#501", # 501 should be the user id of the default user
+    #         "reattach-to-user-namespace",
+    #         "osascript",
+    #         "-e",
+    #         f'display notification "{message}" with title "{title}"',
+    #     ]
+    # )
 
 
-def is_block_active(whoami):
+def is_block_active():
     start_time = subprocess.run(
         [
             "sudo",
-            "-u",
-            whoami,
+            "-u#501",  # 501 should be the user id of the default user
             "defaults",
             "read",
             "org.eyebeam.SelfControl",
@@ -57,9 +64,13 @@ def is_block_active(whoami):
         text=True,
     )
     if start_time.returncode != 0:
-        notify(message="Could not get block starting date!", title="Error!")
-        exit(1)
-    return start_time.stdout != "4001-01-01 00:00:00 +0000\n"
+        # notify(message="Could not get block starting date!", title="Error!")
+        sys.exit(1)
+
+    if start_time.stdout == "4001-01-01 00:00:00 +0000\n":
+        return False
+    else:
+        return True
 
 
 def is_current_SSID_within(list_SSIDs):
@@ -95,17 +106,16 @@ def compute_block_duration(block_end):
     duration = time_end - time_now
 
     if duration < 0:
-        duration += 12 * 60
+        duration += 24 * 60
 
     return duration
 
 
-def set_block_duration(whoami, minutes):
+def set_block_duration(minutes):
     result = subprocess.run(
         [
             "sudo",
-            "-u",
-            whoami,
+            "-u#501",  # 501 should be the user id of the default user
             "defaults",
             "write",
             "org.eyebeam.SelfControl",
@@ -115,25 +125,26 @@ def set_block_duration(whoami, minutes):
         ]
     )
     if result.returncode != 0:
-        notify(message="Could not set block duration!", title="Error!")
+        # notify(message="Could not set block duration!", title="Error!")
         exit(1)
 
 
-def start_block(whoami):
-    my_id = subprocess.run(["id", "-u", whoami], capture_output=True, text=True).stdout[
-        :-1
-    ]
+def start_block():
+    # user_id = subprocess.run(
+    #     ["id", "-u", USER_NAME], capture_output=True, text=True
+    # ).stdout[:-1]
+    user_id = 501
+
     result = subprocess.run(
         [
-            "sudo",
             "/Applications/SelfControl.app/Contents/MacOS/org.eyebeam.SelfControl",
-            my_id,
+            user_id,
             "--install",
         ]
     )
     if result.returncode != 0:
-        notify(message="Could not start block!", title="Error!")
-        exit(1)
+        # notify(message="Could not start block!", title="Error!")
+        sys.exit(1)
 
 
 if __name__ == "__main__":
@@ -141,31 +152,30 @@ if __name__ == "__main__":
     block_end = args.time[0]
 
     # check for root
-    whoami = os.getenv("USER")
-    if whoami is None:
-        notify(message="This script must be run as root", title="Error!")
-        exit(0)
+    if os.geteuid() != 0:
+        # notify(message="This script must be run as root", title="Error!")
+        sys.exit(1)
 
     # check for block already running
-    if is_block_active(whoami):
-        notify(message="Block already running!", title="Discipline active")
-        exit(0)
+    if is_block_active():
+        # notify(message="Block already running!", title="Discipline active")
+        sys.exit(0)
 
     # check SSID condition
     if args.SSID is not None and not is_current_SSID_within(args.SSID):
-        exit(0)  # quit silently
+        sys.exit(0)  # quit silently
 
     # get duration and check on duration
     minutes = compute_block_duration(block_end)
     if minutes > 12 * 60:
-        exit(0)  # quit silently
+        sys.exit(0)  # quit silently
 
     # start block
-    notify(
-        message=f"Start working in {GRACE_TIME} seconds!",
-        title=f"Discipline until {block_end}",
-    )
-    time.sleep(GRACE_TIME)
+    # notify(
+    #     message=f"Start working in {GRACE_TIME} seconds!",
+    #     title=f"Discipline until {block_end}",
+    # )
+    # time.sleep(GRACE_TIME)
 
-    set_block_duration(whoami, minutes)
-    start_block(whoami)
+    set_block_duration(minutes)
+    start_block()

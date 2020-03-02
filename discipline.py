@@ -2,6 +2,7 @@
 
 import argparse
 import sys
+from os import getenv
 import subprocess
 import re
 
@@ -37,9 +38,18 @@ def notify(message, title):
         ["osascript", "-e", f'display notification "{message}" with title "{title}"']
     )
 
-def is_block_active():
+
+def is_block_active(whoami):
     start_time = subprocess.run(
-        ["defaults", "read", "org.eyebeam.SelfControl", "BlockStartedDate"],
+        [
+            "sudo",
+            "-u",
+            whoami,
+            "defaults",
+            "read",
+            "org.eyebeam.SelfControl",
+            "BlockStartedDate",
+        ],
         capture_output=True,
         text=True,
     )
@@ -66,7 +76,14 @@ def is_current_SSID_within(list_SSIDs):
 if __name__ == "__main__":
     args = parse_args()
 
-    if is_block_active():
+    # check for root
+    whoami = getenv("USER")
+    if whoami is None:
+        notify(message="This script must be run as root", title="Error!")
+        exit(0)
+
+    # check for block already running
+    if is_block_active(whoami):
         notify(message="Block already running!", title="Discipline active")
         exit(0)
 

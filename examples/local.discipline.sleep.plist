@@ -4,23 +4,37 @@
 <dict>
 	<key>Disabled</key>
 	<false/>
+	<key>InitGroups</key>
+	<true/>
 	<key>Label</key>
-	<string>local.discipline</string>
+	<string>local.discipline.sleep</string>
 	<key>ProgramArguments</key>
 	<array>
-		<string>osascript</string>
-		<string>-e</string>
-		<string>tell script "Discipline" to block_me("00:00","23:59", 5)</string>
+		<string>/Users/YOURUSERNAMEHERE/.discipline.py</string>
+		<string>-u</string>
+		<string>07:00</string>
+		<string>-n</string>
+		<string>YOURWIFINAMEHERE</string>
 	</array>
+	<key>RunAtLoad</key>
+	<true/>
 	<key>StandardErrorPath</key>
-	<string>/tmp/local.discipline.stderr</string>
+	<string>/private/tmp/local.discipline.sleep.stderr</string>
 	<key>StandardOutPath</key>
-	<string>/tmp/local.discipline.stdout</string>
+	<string>/private/tmp/local.discipline.sleep.stdout</string>
 	<key>StartCalendarInterval</key>
 	<array>
 		<dict>
 			<key>Hour</key>
+			<integer>23</integer>
+			<key>Minute</key>
 			<integer>0</integer>
+			<key>Weekday</key>
+			<integer>0</integer>
+		</dict>
+		<dict>
+			<key>Hour</key>
+			<integer>23</integer>
 			<key>Minute</key>
 			<integer>0</integer>
 			<key>Weekday</key>
@@ -28,7 +42,7 @@
 		</dict>
 		<dict>
 			<key>Hour</key>
-			<integer>0</integer>
+			<integer>23</integer>
 			<key>Minute</key>
 			<integer>0</integer>
 			<key>Weekday</key>
@@ -36,7 +50,7 @@
 		</dict>
 		<dict>
 			<key>Hour</key>
-			<integer>0</integer>
+			<integer>23</integer>
 			<key>Minute</key>
 			<integer>0</integer>
 			<key>Weekday</key>
@@ -44,28 +58,14 @@
 		</dict>
 		<dict>
 			<key>Hour</key>
-			<integer>0</integer>
+			<integer>23</integer>
 			<key>Minute</key>
 			<integer>0</integer>
 			<key>Weekday</key>
 			<integer>4</integer>
 		</dict>
-		<dict>
-			<key>Hour</key>
-			<integer>0</integer>
-			<key>Minute</key>
-			<integer>0</integer>
-			<key>Weekday</key>
-			<integer>5</integer>
-		</dict>
-		<dict>
-			<key>Hour</key>
-			<integer>0</integer>
-			<key>Minute</key>
-			<integer>0</integer>
-			<key>Weekday</key>
-			<integer>6</integer>
-		</dict>
 	</array>
+	<key>UserName</key>
+	<string>root</string>
 </dict>
 </plist>

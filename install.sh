@@ -1,8 +1,9 @@
 #!/bin/bash
 
-# create folders if missing
-mkdir -p ~/Library/Script\ Libraries
-mkdir -p ~/Library/LaunchAgents
+# necessary to do this since I cannot manage access to my Documents folder since Catalina
+cp ./discipline.py ~/.discipline.py
 
-sudo osacompile -o Discipline.scpt Discipline.applescript
-cp Discipline.scpt ~/Library/Script\ Libraries
+# remember to change the username and the wifi SSID(s)!
+cp ./examples/local.discipline.morning.plist /Library/LaunchDaemons/
+cp ./examples/local.discipline.noon.plist /Library/LaunchDaemons/
+cp ./examples/local.discipline.sleep.plist /Library/LaunchDaemons/

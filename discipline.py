@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 
-from time import time, sleep
+import time
+from datetime import datetime
 import argparse
-import sys
-from os import getenv
+import os, sys
 import subprocess
 import re
 
@@ -81,7 +81,23 @@ def is_current_SSID_within(list_SSIDs):
 
 
 def compute_block_duration(block_end):
-    return 2
+    assert len(block_end) == 5, "Time should be in hh:mm format"
+    assert block_end[2] == ":", "Time should be in hh:mm format"
+
+    h = int(block_end.split(":")[0])
+    m = int(block_end.split(":")[1])
+    assert 0 <= h <= 23
+    assert 0 <= m <= 59
+
+    time_end = h * 60 + m
+    time_now = datetime.now().hour * 60 + datetime.now().minute
+
+    duration = time_end - time_now
+
+    if duration < 0:
+        duration += 12 * 60
+
+    return duration
 
 
 def set_block_duration(whoami, minutes):
@@ -125,7 +141,7 @@ if __name__ == "__main__":
     block_end = args.time[0]
 
     # check for root
-    whoami = getenv("USER")
+    whoami = os.getenv("USER")
     if whoami is None:
         notify(message="This script must be run as root", title="Error!")
         exit(0)
@@ -141,7 +157,7 @@ if __name__ == "__main__":
 
     # get duration and check on duration
     minutes = compute_block_duration(block_end)
-    if minutes <= 0 or minutes > 12 * 60:
+    if minutes > 12 * 60:
         exit(0)  # quit silently
 
     # start block
@@ -149,12 +165,7 @@ if __name__ == "__main__":
         message=f"Start working in {GRACE_TIME} seconds!",
         title=f"Discipline until {block_end}",
     )
-    sleep(GRACE_TIME)
+    time.sleep(GRACE_TIME)
 
     set_block_duration(whoami, minutes)
     start_block(whoami)
-
-
-# # write down starting time
-
-# # write down end time

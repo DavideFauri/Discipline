@@ -3,11 +3,14 @@
 import time
 from datetime import datetime
 import argparse
-import os, sys
+import os
+import sys
 import subprocess
 import re
 
+
 GRACE_TIME = 5
+USER_ID = "501"  # 501 should be the user id of the default user
 
 
 def parse_args():
@@ -37,24 +40,24 @@ def parse_args():
 
 
 def notify(message="", title="Discipline"):
-    raise NotImplementedError("notification do not work at the moment")
-    # subprocess.run(
-    #     [
-    #         "sudo",
-    #         "-u#501", # 501 should be the user id of the default user
-    #         "reattach-to-user-namespace",
-    #         "osascript",
-    #         "-e",
-    #         f'display notification "{message}" with title "{title}"',
-    #     ]
-    # )
+    subprocess.run(
+        [
+            "sudo",
+            "launchctl",
+            "asuser",
+            USER_ID,
+            "osascript",
+            "-e",
+            f'display notification "{message}" with title "{title}"',
+        ]
+    )
 
 
 def is_block_active():
     start_time = subprocess.run(
         [
             "sudo",
-            "-u#501",  # 501 should be the user id of the default user
+            f"-u#{USER_ID}",
             "defaults",
             "read",
             "org.eyebeam.SelfControl",
@@ -64,7 +67,7 @@ def is_block_active():
         text=True,
     )
     if start_time.returncode != 0:
-        # notify(message="Could not get block starting date!", title="Error!")
+        notify(message="Could not get block starting date!", title="Error!")
         sys.exit(1)
 
     if start_time.stdout == "4001-01-01 00:00:00 +0000\n":
@@ -115,7 +118,7 @@ def set_block_duration(minutes):
     result = subprocess.run(
         [
             "sudo",
-            "-u#501",  # 501 should be the user id of the default user
+            f"-u#{USER_ID}",
             "defaults",
             "write",
             "org.eyebeam.SelfControl",
@@ -125,40 +128,34 @@ def set_block_duration(minutes):
         ]
     )
     if result.returncode != 0:
-        # notify(message="Could not set block duration!", title="Error!")
+        notify(message="Could not set block duration!", title="Error!")
         exit(1)
 
 
 def start_block():
-    # user_id = subprocess.run(
-    #     ["id", "-u", USER_NAME], capture_output=True, text=True
-    # ).stdout[:-1]
-    user_id = 501
-
     result = subprocess.run(
         [
             "/Applications/SelfControl.app/Contents/MacOS/org.eyebeam.SelfControl",
-            user_id,
+            USER_ID,
             "--install",
         ]
     )
     if result.returncode != 0:
-        # notify(message="Could not start block!", title="Error!")
+        notify(message="Could not start block!", title="Error!")
         sys.exit(1)
 
 
-if __name__ == "__main__":
-    args = parse_args()
+def main(args):
     block_end = args.time[0]
 
     # check for root
     if os.geteuid() != 0:
-        # notify(message="This script must be run as root", title="Error!")
+        notify(message="This script must be run as root", title="Error!")
         sys.exit(1)
 
     # check for block already running
     if is_block_active():
-        # notify(message="Block already running!", title="Discipline active")
+        notify(message="Block already running!", title="Discipline active")
         sys.exit(0)
 
     # check SSID condition
@@ -171,11 +168,16 @@ if __name__ == "__main__":
         sys.exit(0)  # quit silently
 
     # start block
-    # notify(
-    #     message=f"Start working in {GRACE_TIME} seconds!",
-    #     title=f"Discipline until {block_end}",
-    # )
-    # time.sleep(GRACE_TIME)
+    notify(
+        message=f"Start working in {GRACE_TIME} seconds!",
+        title=f"Discipline until {block_end}",
+    )
+    time.sleep(GRACE_TIME)
 
     set_block_duration(minutes)
     start_block()
+
+
+if __name__ == "__main__":
+    args = parse_args()
+    main(args)

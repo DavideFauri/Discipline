@@ -1,3 +1,5 @@
+August 2020 edit: I'm archiving this repo since there is no need for this code anymore. I'm using [auto-selfcontrol](https://github.com/andreasgrill/auto-selfcontrol) now.
+
 ## Discipline
 
 I created this small program to block my own procrastination attempts. It uses a combination of [`launchd`](http://www.launchd.info/) and Python to automatically launch SelfControl at predetermined times, blocking distracting websites.
